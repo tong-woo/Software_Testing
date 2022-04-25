@@ -2,16 +2,13 @@ namespace Connect4
 {
     class Board
     {
-        private int rowAmount;
-        private int columnAmount;
+        public int rowAmount, columnAmount;
         private Column[] field;
         private int selected;
-        private int turn;
         public Board(int width, int height)
         {
             columnAmount = width;
             rowAmount = height;
-            turn = 1;
             field = new Column[columnAmount];
             for (int i = 0; i < columnAmount; i++)
                 field[i] = new Column(rowAmount);
@@ -45,13 +42,9 @@ namespace Connect4
             return true;
         }
 
-        public void Move()
+        public void Move(Player player)
         {
-            field[selected].AddPiece(turn);
-            if (turn == 1)
-                turn = 2;
-            else
-                turn = 1;
+            field[selected].AddPiece(player);
             for (int i = 0; i < columnAmount; i++)
                 if (!field[i].isFull)
                 {
@@ -68,20 +61,16 @@ namespace Connect4
             DrawTop();
             for (int i = 0; i < rowAmount; i++)
             {
-                Console.SetCursorPosition(x, y + i * 2 + 2);
+                Console.SetCursorPosition(x, y + i + 2);
                 DrawRow(i);
-                if (i != rowAmount - 1)
-                {
-                    Console.SetCursorPosition(x, y + i * 2 + 3);
-                    DrawSeparator();
-                }
             }
-            Console.SetCursorPosition(x, y + rowAmount * 2 + 1);
+            Console.SetCursorPosition(x, y + rowAmount + 2);
             DrawBottom();
         }
 
         private void DrawSelection()
         {
+            Console.Write(" ");
             for (int i = 0; i < columnAmount; i++)
             {
                 if (selected == i)
@@ -93,78 +82,53 @@ namespace Connect4
 
         private void DrawTop()
         {
-            Console.Write("╔");
+            Console.Write("╔═");
             for (int i = 0; i < columnAmount; i++)
-            {
-                Console.Write("═");
-                if (i != columnAmount - 1)
-                    Console.Write("╦");
-            }
+                Console.Write("══");
             Console.Write("╗");
         }
 
         private void DrawRow(int row)
         {
-            Console.Write("║");
+            Console.Write("║ ");
             for (int i = 0; i < columnAmount; i++)
             {
-                switch(field[i][row])
+                Player? piece = field[i][row];
+                if (piece is null)
+                    Console.Write("○");
+                else
                 {
-                    case 1:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write("O");
-                        break;
-                    case 2:
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.Write("O");
-                        break;
-                    default:
-                        Console.Write(" ");
-                        break;
+                    Console.ForegroundColor = piece.color;
+                    Console.Write("●");
+                    Console.ForegroundColor = Program.defaultColor;
                 }
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write("║");
+                Console.Write(" ");
             }
-        }
-
-        private void DrawSeparator()
-        {
-            Console.Write("╠");
-            for (int i = 0; i < columnAmount; i++)
-            {
-                Console.Write("═");
-                if (i != columnAmount - 1)
-                    Console.Write("╬");
-            }
-            Console.Write("╣");
+            Console.Write("║");
         }
 
         private void DrawBottom()
         {
-            Console.Write("╚");
+            Console.Write("╚═");
             for (int i = 0; i < columnAmount; i++)
-            {
-                Console.Write("═");
-                if (i != columnAmount - 1)
-                    Console.Write("╩");
-            }
+                Console.Write("══");
             Console.Write("╝");
         }
     }
 
     class Column
     {
-        private int[] column;
+        private Player?[] column;
         private int nextEmpty;
         public Column(int rows)
         {
             nextEmpty = rows - 1;
-            column = new int[rows];
+            column = new Player?[rows];
             for (int i = 0; i < rows; i++)
-                column[i] = 0;
+                column[i] = null;
         }
 
-        public int this[int index]
+        public Player? this[int index]
         {
             get => column[index];
         }
@@ -173,7 +137,7 @@ namespace Connect4
             get => nextEmpty < 0;
         }
 
-        public void AddPiece(int player)
+        public void AddPiece(Player player)
         {
             if (isFull)
                 throw new OverflowException("Column is full");

@@ -2,40 +2,22 @@
 {
     class Program
     {
+        public static ConsoleColor defaultColor = ConsoleColor.White;
+        public static int nameLength = 16;
+        public static int boardWidth = 7, boardHeight = 6;
+        public static int minConsoleWidth = 48, minConsoleHeight = 14;
         static void Main(string[] args)
         {
             Console.CancelKeyPress += (object sender, ConsoleCancelEventArgs e) => {e.Cancel = true;};
             Console.CursorVisible = false;
             Console.Clear();
-            Board board = new Board(7, 6);
-            board.Draw(0, 0);
-            while(true)
-            {
-                if (Console.KeyAvailable)
-                {
-                    ConsoleKey key = Console.ReadKey().Key;
-                    switch (key)
-                    {
-                        case ConsoleKey.LeftArrow:
-                            board.SelectLeft();
-                            break;
-                        case ConsoleKey.RightArrow:
-                            board.SelectRight();
-                            break;
-                        case ConsoleKey.Enter:
-                            board.Move();
-                            break;
-                        case ConsoleKey.Escape:
-                            CloseProgram();
-                            break;
-                        default:
-                            break;
-                    }
-                    board.Draw(0, 0);
-                    if (board.isFull())
-                        CloseProgram();
-                }
-            }
+
+            Player player1 = new Player("PlayerOne.......", ConsoleColor.Red);
+            Player player2 = new Player("PlayerTwo.......", ConsoleColor.Yellow);
+            GameScreen game = new GameScreen(player1, player2, boardWidth, boardHeight);
+            game.Play();
+
+            CloseProgram();
         }
         static void CloseProgram()
         {
