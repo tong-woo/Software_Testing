@@ -6,52 +6,61 @@ namespace Connect4
 {
     class GameTimer
     {
-        private System.Timers.Timer _timer;
+        private System.Timers.Timer? _timer;
         private int sec;
-        public GameTimer(int Ms){
-            sec = Ms/100 ;
-            _timer = new System.Timers.Timer(Ms);
-        }
-
-        public System.Timers.Timer GetTimer{
-            get{return _timer;}
-        }
-
-        public void countdown()
+        private int x, y;
+        public GameTimer(int x, int y)
         {
-            _timer.Elapsed += timer_Elapsed;
-            _timer.Start(); Console.Read();
+            this.x = x;
+            this.y = y;
         }
 
-
-        public void timer_Elapsed(object? sender, ElapsedEventArgs e)
+        public System.Timers.Timer? GetTimer
         {
-            sec--;
-            Console.Clear();
-            Console.WriteLine("************************************************");
-            Console.WriteLine("           Please Move in 2 minutes             ");
-            Console.WriteLine("");
-            Console.WriteLine("         Time Remaining:  " + sec.ToString()      );
-            Console.WriteLine("");
-            Console.WriteLine("*************************************************");
+            get { return _timer; }
+        }
 
-            if (sec == 0)
+        public void Start(int seconds)
+        {
+            // Hook up the Elapsed event for the timer.
+            this.sec = seconds;
+            _timer = new System.Timers.Timer();
+            _timer.Interval = 1000;
+            _timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            _timer.AutoReset = true;
+            _timer.Enabled = true;
+        }
+
+  
+        
+
+        public void Draw()
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write("{0} ", sec);
+        }
+
+        public void Stop()
+        {
+            if (_timer is not null)
             {
-                Console.Clear();
-                Console.WriteLine("");
-                Console.WriteLine("************************************************");
-                Console.WriteLine("               your opponent win!!!             ");
-                Console.WriteLine("");
-                Console.WriteLine("                      O V E R                   ");
-                Console.WriteLine("************************************************");
-
-
                 _timer.Close();
                 _timer.Dispose();
-
+                _timer = null;
             }
+        }
 
-            GC.Collect();
+        public bool Stopped {
+            get => _timer == null;
+        }
+
+
+        public void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            sec--;
+            Draw();
+            if (sec == 0)
+                Stop();
         }
     }
 }

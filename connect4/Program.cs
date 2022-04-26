@@ -29,18 +29,16 @@ namespace Connect4
                 Console.WriteLine("pick color index: type r(red) or y(yellow)");
                 color[i] = Console.ReadLine();
             }
-            GameTimer timer = new GameTimer(12000);
-
+            
             // Player player1 = new Player("PlayerOne.......", ConsoleColor.Red, true);
             // Player player2 = new Player("PlayerTwo.......", ConsoleColor.Yellow, false);
             
             Player player1 = new Player(name[0], colorDict[color[0]], true);
             Player player2 = new Player(name[1], colorDict[color[1]], false);
 
-
+            
             GameScreen game = new GameScreen(player1, player2, boardWidth, boardHeight);
             game.Play();
-
             CloseProgram();
         }
         static void CloseProgram()

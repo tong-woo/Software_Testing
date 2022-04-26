@@ -6,6 +6,8 @@ namespace Connect4
         private Player player2;
         private Player currentTurn;
         private Board board;
+
+        private GameTimer timer;
         public GameScreen(Player player1, Player player2, int boardWidth, int boardHeight)
         {
             this.player1 = player1;
@@ -14,9 +16,12 @@ namespace Connect4
             this.board = new Board(boardWidth, boardHeight);
         }
 
+        
         public void Play()
         {
             int currentWidth = 0, currentHeight = 0;
+            timer = new GameTimer(Console.WindowWidth / 2, 2);
+            timer.Start(30);
             while(true)
             {
                 // Make sure the console fixes itself on resize
@@ -42,6 +47,8 @@ namespace Connect4
                             break;
                         case ConsoleKey.Enter:
                             board.Move(currentTurn);
+                            timer.Stop();
+                            timer.Start(30);
                             if (currentTurn == player1)
                                 currentTurn = player2;
                             else
@@ -56,6 +63,9 @@ namespace Connect4
                     if (board.isFull())
                         return;
                 }
+                if (timer.Stopped)
+                    return;
+                
                 Thread.Sleep(50);
             }
         }
@@ -74,6 +84,7 @@ namespace Connect4
                 Console.SetCursorPosition(Console.WindowWidth - player2.name.Length - 5, 1);
                 player2.Draw(currentTurn == player2);
                 board.Draw(Console.WindowWidth / 2 - (board.columnAmount + 1), Console.WindowHeight / 2 - (board.rowAmount / 2 + 1));
+                timer.Draw();
             }
         }
     }

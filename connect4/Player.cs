@@ -17,6 +17,7 @@ namespace Connect4
         public void Swap(){
             this.isCurrentPlayer = !this.isCurrentPlayer;
         }
+
         public void Draw(bool isTurn)
         {
             if (isTurn)
@@ -33,5 +34,6 @@ namespace Connect4
             else
                 Console.Write("  ");
         }
+        
     }
 }
