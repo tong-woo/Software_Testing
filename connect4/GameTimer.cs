@@ -49,9 +49,6 @@ namespace Connect4
                 _timer.Close();
                 _timer.Dispose();
 
-                Console.Clear();
-                Console.CursorVisible = true;
-                Environment.Exit(0);
             }
 
             GC.Collect();
