@@ -8,12 +8,18 @@ namespace Connect4
         private Board board;
 
         private GameTimer timer;
+
+        private GameReferee referee;
         public GameScreen(Player player1, Player player2, int boardWidth, int boardHeight)
         {
             this.player1 = player1;
             this.player2 = player2;
             this.currentTurn = player1;
             this.board = new Board(boardWidth, boardHeight);
+
+            //added by yao
+            this.referee = new GameReferee(player1, player2, boardWidth, boardHeight);
+
         }
 
         
@@ -48,6 +54,11 @@ namespace Connect4
                         case ConsoleKey.Enter:
                             board.Move(currentTurn);
                             timer.Stop();
+
+                             //check if the game is over
+                            //0: game is not over; 1: player1 wins; 2: player2 wins; 3: draw
+                            // if (referee.checkVictory(board) != 0) break;
+                            referee.checkVictory(board);
                             timer.Start(30);
                             if (currentTurn == player1)
                                 currentTurn = player2;

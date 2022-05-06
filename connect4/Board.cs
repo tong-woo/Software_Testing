@@ -3,7 +3,7 @@ namespace Connect4
     class Board
     {
         public int rowAmount, columnAmount;
-        private Column[] field;
+        public Column[] field;
         private int selected;
         public Board(int width, int height)
         {
