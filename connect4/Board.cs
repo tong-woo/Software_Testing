@@ -4,7 +4,7 @@ namespace Connect4
     {
         public int rowAmount, columnAmount;
         public Column[] field;
-        private int selected;
+        private int selection;
         public Board(int width, int height)
         {
             columnAmount = width;
@@ -12,26 +12,26 @@ namespace Connect4
             field = new Column[columnAmount];
             for (int i = 0; i < columnAmount; i++)
                 field[i] = new Column(rowAmount);
-            selected = 0;
+            selection = 0;
         }
 
         public void SelectLeft()
         {
             do
             {
-                selected -= 1;
-                if (selected < 0)
-                    selected = columnAmount - 1;
-            } while (field[selected].isFull);
+                selection -= 1;
+                if (selection < 0)
+                    selection = columnAmount - 1;
+            } while (field[selection].isFull);
         }
         public void SelectRight()
         {
             do
             {
-                selected += 1;
-                if (selected >= columnAmount)
-                    selected = 0;
-            } while (field[selected].isFull);
+                selection += 1;
+                if (selection >= columnAmount)
+                    selection = 0;
+            } while (field[selection].isFull);
         }
 
         public bool isFull()
@@ -42,15 +42,18 @@ namespace Connect4
             return true;
         }
 
-        public void Move(Player player)
+        public (int, int) Move(Player player)
         {
-            field[selected].AddPiece(player);
+            int x, y;
+            x = selection;
+            y = field[selection].AddPiece(player);
             for (int i = 0; i < columnAmount; i++)
                 if (!field[i].isFull)
                 {
-                    selected = i;
+                    selection = i;
                     break;
                 }
+            return (x, y);
         }
 
         public void Draw(int x, int y)
@@ -73,7 +76,7 @@ namespace Connect4
             Console.Write(" ");
             for (int i = 0; i < columnAmount; i++)
             {
-                if (selected == i)
+                if (selection == i)
                     Console.Write(" v");
                 else
                     Console.Write("  ");
@@ -137,12 +140,13 @@ namespace Connect4
             get => nextEmpty < 0;
         }
 
-        public void AddPiece(Player player)
+        public int AddPiece(Player player)
         {
             if (isFull)
                 throw new OverflowException("Column is full");
             column[nextEmpty] = player;
             nextEmpty--;
+            return nextEmpty + 1;
         }
     }
 }

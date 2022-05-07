@@ -17,10 +17,7 @@ namespace Connect4
             this.currentTurn = player1;
             this.board = new Board(boardWidth, boardHeight);
             this.timer = new GameTimer(Console.WindowWidth / 2, 2);
-
-            //added by yao
             this.referee = new GameReferee(player1, player2, boardWidth, boardHeight);
-
         }
 
         
@@ -34,6 +31,7 @@ namespace Connect4
                 if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
                 {
                     Console.Clear();
+                    timer.UpdatePosition(Console.WindowWidth / 2, 2);
                     Draw();
                 }
                 currentWidth = Console.WindowWidth;
@@ -52,18 +50,26 @@ namespace Connect4
                             board.SelectRight();
                             break;
                         case ConsoleKey.Enter:
-                            board.Move(currentTurn);
+                            // Do the move
+                            (int x, int y) = board.Move(currentTurn);
                             timer.Stop();
+                            Player? winner = referee.checkVictory(board, x, y);
+                            
+                            // Check if the game is over
+                            if (winner is not null || board.isFull())
+                            {
+                                EndGame(winner);
+                                return;
+                            }
 
-                             //check if the game is over
-                            //0: game is not over; 1: player1 wins; 2: player2 wins; 3: draw
-                            // if (referee.checkVictory(board) != 0) break;
-                            referee.checkVictory(board);
+                            // Go to the next turn
                             timer.Start(30);
+
                             if (currentTurn == player1)
                                 currentTurn = player2;
                             else
                                 currentTurn = player1;
+
                             break;
                         case ConsoleKey.Escape:
                             return;
@@ -71,11 +77,16 @@ namespace Connect4
                             break;
                     }
                     Draw();
-                    if (board.isFull())
-                        return;
                 }
+                // Check if the turn timer has ended
                 if (timer.Stopped)
+                {
+                    if (currentTurn == player1)
+                        EndGame(player2);
+                    else
+                        EndGame(player1);
                     return;
+                }
                 
                 Thread.Sleep(50);
             }
@@ -85,11 +96,13 @@ namespace Connect4
         {
             if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
             {
+                timer.doDraw = false;
                 Console.SetCursorPosition(0, 0);
                 Console.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
             }
             else
             {
+                timer.doDraw = true;
                 Console.SetCursorPosition(1, 1);
                 player1.Draw(currentTurn == player1);
                 Console.SetCursorPosition(Console.WindowWidth - player2.name.Length - 5, 1);
@@ -97,6 +110,21 @@ namespace Connect4
                 board.Draw(Console.WindowWidth / 2 - (board.columnAmount + 1), Console.WindowHeight / 2 - (board.rowAmount / 2 + 1));
                 timer.Draw();
             }
+        }
+
+        private void EndGame(Player? winner)
+        {
+            string text;
+            if (winner is null)
+                text = "The game ended in a draw!";
+            else
+                text = winner.name + " won! Congratulations!";
+            Draw();
+            Console.SetCursorPosition(Console.WindowWidth / 2 - text.Length / 2, 1);
+            Console.Write(text);
+            Console.SetCursorPosition(Console.WindowWidth / 2 - 14, 2);
+            Console.Write("Press any key to continue...");
+            Console.ReadKey();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Connect4
         public static int nameLength = 16;
         public static int boardWidth = 7, boardHeight = 6;
         public static int minConsoleWidth = 48, minConsoleHeight = 14;
+        private static Player? player1, player2;
         static void Main(string[] args)
         {
             int playerNum = 2;
@@ -32,16 +33,34 @@ namespace Connect4
                 color[i] = Console.ReadLine();
             }
             
-            // Player player1 = new Player("PlayerOne.......", ConsoleColor.Red, true);
-            // Player player2 = new Player("PlayerTwo.......", ConsoleColor.Yellow, false);
-            
-            Player player1 = new Player(name[0], colorDict[color[0]], true);
-            Player player2 = new Player(name[1], colorDict[color[1]], false);
+            player1 = new Player(name[0], colorDict[color[0]]);
+            player2 = new Player(name[1], colorDict[color[1]]);
 
-            
-            GameScreen game = new GameScreen(player1, player2, boardWidth, boardHeight);
+            ToStartScreen();
+        }
+        static void ToStartScreen()
+        {
+            // TODO
+            ToGameScreen();
+        }
+        static void ToGameScreen()
+        {
+            Console.Clear();
+            GameScreen game = new GameScreen(player1!, player2!, boardWidth, boardHeight);
             game.Play();
-            CloseProgram();
+            ToEndScreen();
+        }
+        static void ToEndScreen()
+        {
+            Console.Clear();
+            EndScreen end = new EndScreen();
+            int selection = end.Play();
+            if (selection == 0)
+                ToGameScreen();
+            else if (selection == 1)
+                ToGameScreen(); // TODO
+            else
+                CloseProgram();
         }
         static void CloseProgram()
         {
