@@ -72,6 +72,7 @@ namespace Connect4
 
                             break;
                         case ConsoleKey.Escape:
+                            EndGame(null);
                             return;
                         default:
                             break;
@@ -119,6 +120,7 @@ namespace Connect4
                 text = "The game ended in a draw!";
             else
                 text = winner.name + " won! Congratulations!";
+            timer.Stop();
             Draw();
             Console.SetCursorPosition(Console.WindowWidth / 2 - text.Length / 2, 1);
             Console.Write(text);
