@@ -16,6 +16,7 @@ namespace Connect4
             this.player2 = player2;
             this.currentTurn = player1;
             this.board = new Board(boardWidth, boardHeight);
+            this.timer = new GameTimer(Console.WindowWidth / 2, 2);
 
             //added by yao
             this.referee = new GameReferee(player1, player2, boardWidth, boardHeight);
@@ -26,7 +27,6 @@ namespace Connect4
         public void Play()
         {
             int currentWidth = 0, currentHeight = 0;
-            timer = new GameTimer(Console.WindowWidth / 2, 2);
             timer.Start(30);
             while(true)
             {

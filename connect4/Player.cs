@@ -27,7 +27,7 @@ namespace Connect4
 
             Console.ForegroundColor = color;
             Console.Write(name);
-            Console.ForegroundColor = Program.defaultColor;
+            Console.ForegroundColor = Program.defaultForegroundColor;
 
             if (isTurn)
                 Console.Write(" <");

@@ -100,7 +100,7 @@ namespace Connect4
                 {
                     Console.ForegroundColor = piece.color;
                     Console.Write("●");
-                    Console.ForegroundColor = Program.defaultColor;
+                    Console.ForegroundColor = Program.defaultForegroundColor;
                 }
                 Console.Write(" ");
             }

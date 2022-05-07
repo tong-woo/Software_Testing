@@ -7,7 +7,7 @@ namespace Connect4
     class Program
     {
         
-        public static ConsoleColor defaultColor = ConsoleColor.White;
+        public static ConsoleColor defaultForegroundColor, defaultBackgroundColor;
         public static int nameLength = 16;
         public static int boardWidth = 7, boardHeight = 6;
         public static int minConsoleWidth = 48, minConsoleHeight = 14;
@@ -21,6 +21,8 @@ namespace Connect4
             colorDict.Add("y", ConsoleColor.Yellow);
             Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) => {e.Cancel = true;};
             Console.CursorVisible = false;
+            defaultForegroundColor = Console.ForegroundColor;
+            defaultBackgroundColor = Console.BackgroundColor;
             Console.Clear();
             for (int i = 0; i < playerNum; i++){
                 Console.WriteLine("Enter Name: ");
