@@ -14,33 +14,20 @@ namespace Connect4
         private static Player? player1, player2;
         static void Main(string[] args)
         {
-            int playerNum = 2;
-            string[] name = new string[playerNum];
-            string[] color = new string[playerNum];
-            Dictionary<string, ConsoleColor> colorDict =  new Dictionary<string, ConsoleColor>();
-            colorDict.Add("r", ConsoleColor.Red);
-            colorDict.Add("y", ConsoleColor.Yellow);
             Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) => {e.Cancel = true;};
             Console.CursorVisible = false;
             defaultForegroundColor = Console.ForegroundColor;
             defaultBackgroundColor = Console.BackgroundColor;
-            Console.Clear();
-            for (int i = 0; i < playerNum; i++){
-                Console.WriteLine("Enter Name: ");
-                name[i] = Console.ReadLine();
-
-                Console.WriteLine("pick color index: type r(red) or y(yellow)");
-                color[i] = Console.ReadLine();
-            }
-            
-            player1 = new Player(name[0], colorDict[color[0]]);
-            player2 = new Player(name[1], colorDict[color[1]]);
 
             ToStartScreen();
         }
         static void ToStartScreen()
         {
-            // TODO
+            player1 = null;
+            player2 = null;
+            Console.Clear();
+            StartScreen start = new StartScreen();
+            (player1, player2) = start.Play();
             ToGameScreen();
         }
         static void ToGameScreen()
@@ -58,11 +45,11 @@ namespace Connect4
             if (selection == 0)
                 ToGameScreen();
             else if (selection == 1)
-                ToGameScreen(); // TODO
+                ToStartScreen();
             else
                 CloseProgram();
         }
-        static void CloseProgram()
+        public static void CloseProgram()
         {
             Console.Clear();
             Console.CursorVisible = true;

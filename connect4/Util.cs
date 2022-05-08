@@ -3,7 +3,7 @@ namespace Connect4
     class ScreenOption
     {
         public string text;
-        private ConsoleColor color;
+        public ConsoleColor color;
         public ScreenOption(string text)
         {
             this.text = text;
