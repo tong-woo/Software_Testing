@@ -6,7 +6,7 @@ namespace Connect4
 {
     class Program
     {
-        
+        public static Action drawCurrentScreen = () => {};
         public static ConsoleColor defaultForegroundColor, defaultBackgroundColor;
         public static int nameLength = 16;
         public static int boardWidth = 7, boardHeight = 6;
@@ -14,6 +14,8 @@ namespace Connect4
         private static Player? player1, player2;
         static void Main(string[] args)
         {
+            Thread controller = new Thread(GameController);
+            controller.Start();
             Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) => {e.Cancel = true;};
             Console.CursorVisible = false;
             defaultForegroundColor = Console.ForegroundColor;
@@ -54,6 +56,35 @@ namespace Connect4
             Console.Clear();
             Console.CursorVisible = true;
             Environment.Exit(0);
+        }
+        public static void SetDrawScreen(Action draw)
+        {
+            drawCurrentScreen = draw;
+            Console.Clear();
+            draw();
+        }
+        static void GameController()
+        {
+            int currentWidth = 0, currentHeight = 0;
+
+            while(true)
+            {
+                // Make sure the console fixes itself on resize
+                if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
+                {
+                    Console.Clear();
+                    if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
+                    {
+                        Console.SetCursorPosition(0, 0);
+                        Console.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
+                    }
+                    else
+                        drawCurrentScreen!();
+                }
+                currentWidth = Console.WindowWidth;
+                currentHeight = Console.WindowHeight;
+                Thread.Sleep(50);
+            }
         }
     }
 }

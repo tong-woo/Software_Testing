@@ -28,34 +28,65 @@ namespace Connect4
 
     class NameSelection
     {
-        string error;
+        string name, error;
         public NameSelection()
         {
+            name = "";
             error = "";
         }
         public string Play(int number, Player? other)
         {
-            string name = "";
+            Program.SetDrawScreen(() => Draw(number));
+            Console.CursorVisible = true;
 
             while (true)
             {
-                Console.Clear();
-                Draw(number);
-                Console.SetCursorPosition(Console.WindowWidth / 2 - 8, Console.WindowHeight / 2 + 1);
-                name = Console.ReadLine() ?? "";
+                name = "";
+                Program.drawCurrentScreen();
+                ReadName();
                 if (isValid(name, other))
+                {
+                    Console.CursorVisible = false;
                     return name;
+                }
                 else
                     error = "Invalid name!";
             }
         }
+        public void ReadName()
+        {
+            while(true)
+            {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey();
+                    if (((keyInfo.KeyChar >= 'a' && keyInfo.KeyChar <= 'z') || (keyInfo.KeyChar >= 'A' && keyInfo.KeyChar <= 'Z')) && name.Length < 16)
+                        name += keyInfo.KeyChar;
+                    else if (keyInfo.Key == ConsoleKey.Backspace && name.Length > 0)
+                        name = name.Remove(name.Length - 1);
+                    else if (keyInfo.Key == ConsoleKey.Enter)
+                        return;
+                    else if (keyInfo.Key == ConsoleKey.Escape)
+                        Program.CloseProgram();
+                    Program.drawCurrentScreen();
+                }
+                Thread.Sleep(50);
+            }
+        }
         public void Draw(int number)
         {
+            Console.CursorVisible = false;
             string text = "Player " + number + "'s name:";
             Console.SetCursorPosition(Console.WindowWidth / 2 - error.Length / 2, Console.WindowHeight / 2 - 3);
             Console.Write(error);
             Console.SetCursorPosition(Console.WindowWidth / 2 - text.Length / 2, Console.WindowHeight / 2 - 1);
             Console.Write(text);
+            Console.SetCursorPosition(Console.WindowWidth / 2 - 8, Console.WindowHeight / 2 + 1);
+            Console.Write("                 ");
+            Console.SetCursorPosition(Console.WindowWidth / 2 - 8, Console.WindowHeight / 2 + 1);
+            Console.Write(name);
+            Console.SetCursorPosition(Console.WindowWidth / 2 - 8 + name.Length, Console.WindowHeight / 2 + 1);
+            Console.CursorVisible = true;
         }
         private bool isValid(string name, Player? other)
         {
@@ -85,19 +116,10 @@ namespace Connect4
         }
         public ConsoleColor Play(string name, Player? other)
         {
-            int currentWidth = 0, currentHeight = 0;
+            Program.SetDrawScreen(() => Draw(name));
 
             while(true)
             {
-                // Make sure the console fixes itself on resize
-                if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
-                {
-                    Console.Clear();
-                    Draw(name);
-                }
-                currentWidth = Console.WindowWidth;
-                currentHeight = Console.WindowHeight;
-
                 // Check if a key is pressed
                 if (Console.KeyAvailable)
                 {
@@ -126,7 +148,7 @@ namespace Connect4
                         default:
                             break;
                     }
-                    Draw(name);
+                    Program.drawCurrentScreen();
                 }
                 
                 Thread.Sleep(50);
@@ -134,39 +156,31 @@ namespace Connect4
         }
         private void Draw(string name)
         {
-            if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
+            string text = name + "'s color:";
+            Console.SetCursorPosition(Console.WindowWidth / 2 - error.Length / 2, Console.WindowHeight / 2 - 6);
+            Console.Write(error);
+            
+            Console.SetCursorPosition(Console.WindowWidth / 2 - text.Length / 2, Console.WindowHeight / 2 - 4);
+            Console.Write(text);
+
+            int y = Console.WindowHeight / 2 - 2;
+            for (int i = 0; i < options.Length; i++)
             {
-                Console.SetCursorPosition(0, 0);
-                Console.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
-            }
-            else
-            {
-                string text = name + "'s color:";
-                Console.SetCursorPosition(Console.WindowWidth / 2 - error.Length / 2, Console.WindowHeight / 2 - 6);
-                Console.Write(error);
-                
-                Console.SetCursorPosition(Console.WindowWidth / 2 - text.Length / 2, Console.WindowHeight / 2 - 4);
-                Console.Write(text);
+                int x = Console.WindowWidth / 2 - options[i].text.Length / 2;
+                Console.SetCursorPosition(x - 2, y);
+                if (i == selection)
+                    Console.Write("> ");
+                else
+                    Console.Write("  ");
 
-                int y = Console.WindowHeight / 2 - 2;
-                for (int i = 0; i < options.Length; i++)
-                {
-                    int x = Console.WindowWidth / 2 - options[i].text.Length / 2;
-                    Console.SetCursorPosition(x - 2, y);
-                    if (i == selection)
-                        Console.Write("> ");
-                    else
-                        Console.Write("  ");
+                options[i].Draw();
 
-                    options[i].Draw();
+                if (i == selection)
+                    Console.Write(" <");
+                else
+                    Console.Write("  ");
 
-                    if (i == selection)
-                        Console.Write(" <");
-                    else
-                        Console.Write("  ");
-
-                    y += 2;
-                }
+                y += 2;
             }
         }
     }

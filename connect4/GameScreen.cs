@@ -23,20 +23,11 @@ namespace Connect4
         
         public void Play()
         {
-            int currentWidth = 0, currentHeight = 0;
+            Program.SetDrawScreen(Draw);
+
             timer.Start(30);
             while(true)
             {
-                // Make sure the console fixes itself on resize
-                if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
-                {
-                    Console.Clear();
-                    timer.UpdatePosition(Console.WindowWidth / 2, 2);
-                    Draw();
-                }
-                currentWidth = Console.WindowWidth;
-                currentHeight = Console.WindowHeight;
-
                 // Check if a key is pressed
                 if (Console.KeyAvailable)
                 {
@@ -72,12 +63,12 @@ namespace Connect4
 
                             break;
                         case ConsoleKey.Escape:
-                            EndGame(null);
-                            return;
+                            Program.CloseProgram();
+                            break;
                         default:
                             break;
                     }
-                    Draw();
+                    Program.drawCurrentScreen();
                 }
                 // Check if the turn timer has ended
                 if (timer.Stopped)
@@ -95,22 +86,14 @@ namespace Connect4
 
         private void Draw()
         {
-            if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
-            {
-                timer.doDraw = false;
-                Console.SetCursorPosition(0, 0);
-                Console.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
-            }
-            else
-            {
-                timer.doDraw = true;
-                Console.SetCursorPosition(1, 1);
-                player1.Draw(currentTurn == player1);
-                Console.SetCursorPosition(Console.WindowWidth - player2.name.Length - 5, 1);
-                player2.Draw(currentTurn == player2);
-                board.Draw(Console.WindowWidth / 2 - (board.columnAmount + 1), Console.WindowHeight / 2 - (board.rowAmount / 2 + 1));
-                timer.Draw();
-            }
+            timer.UpdatePosition(Console.WindowWidth / 2, 2);
+            timer.doDraw = true;
+            Console.SetCursorPosition(1, 1);
+            player1.Draw(currentTurn == player1);
+            Console.SetCursorPosition(Console.WindowWidth - player2.name.Length - 5, 1);
+            player2.Draw(currentTurn == player2);
+            board.Draw(Console.WindowWidth / 2 - (board.columnAmount + 1), Console.WindowHeight / 2 - (board.rowAmount / 2 + 1));
+            timer.Draw();
         }
 
         private void EndGame(Player? winner)

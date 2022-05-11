@@ -15,19 +15,10 @@ namespace Connect4
         }
         public int Play()
         {
-            int currentWidth = 0, currentHeight = 0;
+            Program.SetDrawScreen(Draw);
 
             while(true)
             {
-                // Make sure the console fixes itself on resize
-                if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
-                {
-                    Console.Clear();
-                    Draw();
-                }
-                currentWidth = Console.WindowWidth;
-                currentHeight = Console.WindowHeight;
-
                 // Check if a key is pressed
                 if (Console.KeyAvailable)
                 {
@@ -47,11 +38,12 @@ namespace Connect4
                         case ConsoleKey.Enter:
                             return selection;
                         case ConsoleKey.Escape:
-                            return 2;
+                            Program.CloseProgram();
+                            break;
                         default:
                             break;
                     }
-                    Draw();
+                    Program.drawCurrentScreen();
                 }
                 
                 Thread.Sleep(50);
@@ -60,32 +52,24 @@ namespace Connect4
 
         private void Draw()
         {
-            if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
+            int y = Console.WindowHeight / 2 - 2;
+            for (int i = 0; i < options.Length; i++)
             {
-                Console.SetCursorPosition(0, 0);
-                Console.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
-            }
-            else
-            {
-                int y = Console.WindowHeight / 2 - 2;
-                for (int i = 0; i < options.Length; i++)
-                {
-                    int x = Console.WindowWidth / 2 - options[i].text.Length / 2;
-                    Console.SetCursorPosition(x - 2, y);
-                    if (i == selection)
-                        Console.Write("> ");
-                    else
-                        Console.Write("  ");
+                int x = Console.WindowWidth / 2 - options[i].text.Length / 2;
+                Console.SetCursorPosition(x - 2, y);
+                if (i == selection)
+                    Console.Write("> ");
+                else
+                    Console.Write("  ");
 
-                    options[i].Draw();
+                options[i].Draw();
 
-                    if (i == selection)
-                        Console.Write(" <");
-                    else
-                        Console.Write("  ");
+                if (i == selection)
+                    Console.Write(" <");
+                else
+                    Console.Write("  ");
 
-                    y += 2;
-                }
+                y += 2;
             }
         }
     }
