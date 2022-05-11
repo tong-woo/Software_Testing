@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Connect4
 {
@@ -16,6 +17,7 @@ namespace Connect4
         {
             Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) => {e.Cancel = true;};
             Console.CursorVisible = false;
+            Console.OutputEncoding = Encoding.UTF8;
             defaultForegroundColor = Console.ForegroundColor;
             defaultBackgroundColor = Console.BackgroundColor;
 

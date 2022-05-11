@@ -5,7 +5,12 @@ VisualStudioVersion = 17.2.32505.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "connect4", "connect4.csproj", "{DA0C581E-EDA7-4717-84F6-55373C49F978}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "connect4.test", "..\connect4test\connect4.test.csproj", "{B4621824-FB0D-4F87-AA93-6A4E67206AD2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "connect4.test", "..\connect4test\connect4.test.csproj", "{B4621824-FB0D-4F87-AA93-6A4E67206AD2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6F3CC69B-0CBC-4A25-8DC2-2928C442BF4D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
