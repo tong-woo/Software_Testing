@@ -7,7 +7,21 @@ namespace connect4.test
     public class PlayerTests
     {
         [TestMethod]
-        public void Player_Draw()
+        public void Player_Draw_IsTurn_3_2() {
+            // Arrange
+            Player player = new("playerName", ConsoleColor.White);
+            StringWriter sw = new();
+            Console.SetOut(sw);
+
+            // Act
+            player.Draw(true);
+
+            // Assert
+            Assert.AreEqual(sw.ToString(), "> playerName <");
+        }
+
+        [TestMethod]
+        public void Player_Draw_IsNotTurn_3_2()
         {
             // Arrange
             Player player = new("playerName", ConsoleColor.White);
