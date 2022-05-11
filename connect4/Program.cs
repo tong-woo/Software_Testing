@@ -65,6 +65,17 @@ namespace Connect4
             Console.Clear();
             draw();
         }
+        public static void SafeDraw()
+        {
+            Console.Clear();
+            if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
+            {
+                Console.SetCursorPosition(0, 0);
+                Console.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
+            }
+            else
+                drawCurrentScreen!();
+        }
         static void GameController()
         {
             int currentWidth = 0, currentHeight = 0;
@@ -74,14 +85,7 @@ namespace Connect4
                 // Make sure the console fixes itself on resize
                 if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
                 {
-                    Console.Clear();
-                    if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
-                    {
-                        Console.SetCursorPosition(0, 0);
-                        Console.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
-                    }
-                    else
-                        drawCurrentScreen!();
+                    SafeDraw();
                 }
                 currentWidth = Console.WindowWidth;
                 currentHeight = Console.WindowHeight;

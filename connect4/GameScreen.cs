@@ -68,7 +68,7 @@ namespace Connect4
                         default:
                             break;
                     }
-                    Program.drawCurrentScreen();
+                    Program.SafeDraw();
                 }
                 // Check if the turn timer has ended
                 if (timer.Stopped)

@@ -43,7 +43,7 @@ namespace Connect4
                         default:
                             break;
                     }
-                    Program.drawCurrentScreen();
+                    Program.SafeDraw();
                 }
                 
                 Thread.Sleep(50);

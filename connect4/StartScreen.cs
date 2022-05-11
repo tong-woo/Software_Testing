@@ -42,7 +42,7 @@ namespace Connect4
             while (true)
             {
                 name = "";
-                Program.drawCurrentScreen();
+                Program.SafeDraw();
                 ReadName();
                 if (isValid(name, other))
                 {
@@ -68,7 +68,7 @@ namespace Connect4
                         return;
                     else if (keyInfo.Key == ConsoleKey.Escape)
                         Program.CloseProgram();
-                    Program.drawCurrentScreen();
+                    Program.SafeDraw();
                 }
                 Thread.Sleep(50);
             }
@@ -148,7 +148,7 @@ namespace Connect4
                         default:
                             break;
                     }
-                    Program.drawCurrentScreen();
+                    Program.SafeDraw();
                 }
                 
                 Thread.Sleep(50);
