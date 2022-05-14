@@ -57,9 +57,9 @@ namespace Connect4
                             // Check if the game is over
                             if (winner is not null || board.isFull())
                                 EndGame(winner);
-
                             // Go to the next turn
-                            timer.Start(30);
+                            else
+                                timer.Start(30);
 
                             if (currentTurn == player1)
                                 currentTurn = player2;
