@@ -66,7 +66,7 @@ namespace Connect4
         public void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             sec--;
-            Draw();
+            Program.SafeDraw(false);
             if (sec == 0)
                 Stop();
         }

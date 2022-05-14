@@ -42,7 +42,7 @@ namespace Connect4
             while (true)
             {
                 name = "";
-                Program.SafeDraw();
+                Program.SafeDraw(false);
                 ReadName();
                 if (isValid(name, other))
                 {
@@ -57,9 +57,10 @@ namespace Connect4
         {
             while(true)
             {
+                Program.DrawOnResize();
                 if (Console.KeyAvailable)
                 {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey();
+                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
                     if (((keyInfo.KeyChar >= 'a' && keyInfo.KeyChar <= 'z') || (keyInfo.KeyChar >= 'A' && keyInfo.KeyChar <= 'Z')) && name.Length < 16)
                         name += keyInfo.KeyChar;
                     else if (keyInfo.Key == ConsoleKey.Backspace && name.Length > 0)
@@ -68,9 +69,9 @@ namespace Connect4
                         return;
                     else if (keyInfo.Key == ConsoleKey.Escape)
                         Program.CloseProgram();
-                    Program.SafeDraw();
+                    Program.SafeDraw(false);
                 }
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
         public void Draw(int number)
@@ -120,10 +121,11 @@ namespace Connect4
 
             while(true)
             {
+                Program.DrawOnResize();
                 // Check if a key is pressed
                 if (Console.KeyAvailable)
                 {
-                    ConsoleKey key = Console.ReadKey().Key;
+                    ConsoleKey key = Console.ReadKey(true).Key;
                     switch (key)
                     {
                         case ConsoleKey.UpArrow:
@@ -148,10 +150,10 @@ namespace Connect4
                         default:
                             break;
                     }
-                    Program.SafeDraw();
+                    Program.SafeDraw(false);
                 }
                 
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
         private void Draw(string name)

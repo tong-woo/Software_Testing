@@ -28,10 +28,11 @@ namespace Connect4
             timer.Start(30);
             while(true)
             {
+                Program.DrawOnResize();
                 // Check if a key is pressed
                 if (Console.KeyAvailable)
                 {
-                    ConsoleKey key = Console.ReadKey().Key;
+                    ConsoleKey key = Console.ReadKey(true).Key;
                     switch (key)
                     {
                         case ConsoleKey.LeftArrow:
@@ -68,7 +69,7 @@ namespace Connect4
                         default:
                             break;
                     }
-                    Program.SafeDraw();
+                    Program.SafeDraw(false);
                 }
                 // Check if the turn timer has ended
                 if (timer.Stopped)
@@ -80,7 +81,7 @@ namespace Connect4
                     return;
                 }
                 
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
 
@@ -109,7 +110,7 @@ namespace Connect4
             Console.Write(text);
             Console.SetCursorPosition(Console.WindowWidth / 2 - 14, 2);
             Console.Write("Press any key to continue...");
-            Console.ReadKey();
+            Console.ReadKey(true);
         }
     }
 }

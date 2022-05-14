@@ -13,10 +13,9 @@ namespace Connect4
         public static int boardWidth = 7, boardHeight = 6;
         public static int minConsoleWidth = 48, minConsoleHeight = 14;
         private static Player? player1, player2;
+        private static int currentWidth = 0, currentHeight = 0;
         static void Main(string[] args)
         {
-            Thread controller = new Thread(GameController);
-            controller.Start();
             Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) => {e.Cancel = true;};
             Console.CursorVisible = false;
             Console.OutputEncoding = Encoding.UTF8;
@@ -29,21 +28,18 @@ namespace Connect4
         {
             player1 = null;
             player2 = null;
-            Console.Clear();
             StartScreen start = new StartScreen();
             (player1, player2) = start.Play();
             ToGameScreen();
         }
         static void ToGameScreen()
         {
-            Console.Clear();
             GameScreen game = new GameScreen(player1!, player2!, boardWidth, boardHeight);
             game.Play();
             ToEndScreen();
         }
         static void ToEndScreen()
         {
-            Console.Clear();
             EndScreen end = new EndScreen();
             int selection = end.Play();
             if (selection == 0)
@@ -62,12 +58,12 @@ namespace Connect4
         public static void SetDrawScreen(Action draw)
         {
             drawCurrentScreen = draw;
-            Console.Clear();
-            draw();
+            SafeDraw(true);
         }
-        public static void SafeDraw()
+        public static void SafeDraw(bool clear)
         {
-            Console.Clear();
+            if (clear)
+                Console.Clear();
             if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
             {
                 Console.SetCursorPosition(0, 0);
@@ -76,21 +72,15 @@ namespace Connect4
             else
                 drawCurrentScreen!();
         }
-        static void GameController()
+        public static void DrawOnResize()
         {
-            int currentWidth = 0, currentHeight = 0;
-
-            while(true)
+            // Make sure the console fixes itself on resize
+            if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
             {
-                // Make sure the console fixes itself on resize
-                if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
-                {
-                    SafeDraw();
-                }
-                currentWidth = Console.WindowWidth;
-                currentHeight = Console.WindowHeight;
-                Thread.Sleep(50);
+                SafeDraw(true);
             }
+            currentWidth = Console.WindowWidth;
+            currentHeight = Console.WindowHeight;
         }
     }
 }

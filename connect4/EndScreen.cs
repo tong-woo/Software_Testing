@@ -19,10 +19,11 @@ namespace Connect4
 
             while(true)
             {
+                Program.DrawOnResize();
                 // Check if a key is pressed
                 if (Console.KeyAvailable)
                 {
-                    ConsoleKey key = Console.ReadKey().Key;
+                    ConsoleKey key = Console.ReadKey(true).Key;
                     switch (key)
                     {
                         case ConsoleKey.UpArrow:
@@ -43,10 +44,10 @@ namespace Connect4
                         default:
                             break;
                     }
-                    Program.SafeDraw();
+                    Program.SafeDraw(false);
                 }
                 
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
 
