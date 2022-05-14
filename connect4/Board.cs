@@ -56,10 +56,13 @@ namespace Connect4
             return (x, y);
         }
 
-        public void Draw(int x, int y)
+        public void Draw(int x, int y, bool drawSelection)
         {
-            Console.SetCursorPosition(x, y);
-            DrawSelection();
+            if (drawSelection)
+            {
+                Console.SetCursorPosition(x, y);
+                DrawSelection();
+            }
             Console.SetCursorPosition(x, y + 1);
             DrawTop();
             for (int i = 0; i < rowAmount; i++)

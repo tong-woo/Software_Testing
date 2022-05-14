@@ -10,6 +10,9 @@ namespace Connect4
         private GameTimer timer;
 
         private GameReferee referee;
+
+        private string endText;
+        private bool gameEnded;
         public GameScreen(Player player1, Player player2, int boardWidth, int boardHeight)
         {
             this.player1 = player1;
@@ -18,14 +21,16 @@ namespace Connect4
             this.board = new Board(boardWidth, boardHeight);
             this.timer = new GameTimer(Console.WindowWidth / 2, 2);
             this.referee = new GameReferee(player1, player2, boardWidth, boardHeight);
+            this.endText = "";
+            this.gameEnded = false;
         }
 
         
         public void Play()
         {
+            timer.Start(30);
             Program.SetDrawScreen(Draw);
 
-            timer.Start(30);
             while(true)
             {
                 Program.DrawOnResize();
@@ -33,6 +38,8 @@ namespace Connect4
                 if (Console.KeyAvailable)
                 {
                     ConsoleKey key = Console.ReadKey(true).Key;
+                    if (gameEnded)
+                        return;
                     switch (key)
                     {
                         case ConsoleKey.LeftArrow:
@@ -49,10 +56,7 @@ namespace Connect4
                             
                             // Check if the game is over
                             if (winner is not null || board.isFull())
-                            {
                                 EndGame(winner);
-                                return;
-                            }
 
                             // Go to the next turn
                             timer.Start(30);
@@ -78,7 +82,6 @@ namespace Connect4
                         EndGame(player2);
                     else
                         EndGame(player1);
-                    return;
                 }
                 
                 Thread.Sleep(10);
@@ -88,29 +91,32 @@ namespace Connect4
         private void Draw()
         {
             timer.UpdatePosition(Console.WindowWidth / 2, 2);
-            timer.doDraw = true;
             Console.SetCursorPosition(1, 1);
             player1.Draw(currentTurn == player1);
             Console.SetCursorPosition(Console.WindowWidth - player2.name.Length - 5, 1);
             player2.Draw(currentTurn == player2);
-            board.Draw(Console.WindowWidth / 2 - (board.columnAmount + 1), Console.WindowHeight / 2 - (board.rowAmount / 2 + 1));
-            timer.Draw();
+            board.Draw(Console.WindowWidth / 2 - (board.columnAmount + 1), Console.WindowHeight / 2 - (board.rowAmount / 2 + 1), !gameEnded);
+            if (gameEnded)
+            {
+                Console.SetCursorPosition(Console.WindowWidth / 2 - endText.Length / 2, 2);
+                Console.Write(endText);
+                Console.SetCursorPosition(Console.WindowWidth / 2 - 14, 3);
+                Console.Write("Press any key to continue...");
+            }
+            else
+                timer.Draw();
         }
 
         private void EndGame(Player? winner)
         {
-            string text;
             if (winner is null)
-                text = "The game ended in a draw!";
+                endText = "The game ended in a draw!";
             else
-                text = winner.name + " won! Congratulations!";
+                endText = winner.name + " won! Congratulations!";
             timer.Stop();
-            Draw();
-            Console.SetCursorPosition(Console.WindowWidth / 2 - text.Length / 2, 1);
-            Console.Write(text);
-            Console.SetCursorPosition(Console.WindowWidth / 2 - 14, 2);
-            Console.Write("Press any key to continue...");
-            Console.ReadKey(true);
+            gameEnded = true;
+            while(Console.KeyAvailable)
+                Console.ReadKey(true);
         }
     }
 }

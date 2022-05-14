@@ -8,7 +8,6 @@ namespace Connect4
     {
         private System.Timers.Timer? _timer;
         private int sec;
-        public bool doDraw;
         private int x, y;
         public GameTimer(int x, int y)
         {
@@ -36,16 +35,12 @@ namespace Connect4
         {
             this.x = x;
             this.y = y;
-            this.doDraw = true;
         }
 
         public void Draw()
         {
-            if (doDraw)
-            {
-                Console.SetCursorPosition(x, y);
-                Console.Write("{0} ", sec);
-            }
+            Console.SetCursorPosition(x, y);
+            Console.Write("{0} ", sec);
         }
 
         public void Stop()

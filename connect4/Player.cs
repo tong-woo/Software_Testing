@@ -2,7 +2,7 @@ namespace Connect4
 {
     public class Player
     {
-        public string name; // Maybe make it a char[15/16] to enforce the length
+        public string name;
         public ConsoleColor color;
 
         public Player(string name, ConsoleColor color)
