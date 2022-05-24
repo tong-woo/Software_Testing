@@ -1,12 +1,15 @@
 namespace Connect4
 {
-    class Board
+    public class Board
     {
         public int rowAmount, columnAmount;
         public Column[] field;
         private int selection;
-        public Board(int width, int height)
+        private IConsoleIO ConsoleIO;
+
+        public Board(IConsoleIO consoleIO, int width, int height)
         {
+            ConsoleIO = consoleIO;
             columnAmount = width;
             rowAmount = height;
             field = new Column[columnAmount];
@@ -60,69 +63,69 @@ namespace Connect4
         {
             if (drawSelection)
             {
-                Console.SetCursorPosition(x, y);
+                ConsoleIO.SetCursorPosition(x, y);
                 DrawSelection();
             }
-            Console.SetCursorPosition(x, y + 1);
+            ConsoleIO.SetCursorPosition(x, y + 1);
             DrawTop();
             for (int i = 0; i < rowAmount; i++)
             {
-                Console.SetCursorPosition(x, y + i + 2);
+                ConsoleIO.SetCursorPosition(x, y + i + 2);
                 DrawRow(i);
             }
-            Console.SetCursorPosition(x, y + rowAmount + 2);
+            ConsoleIO.SetCursorPosition(x, y + rowAmount + 2);
             DrawBottom();
         }
 
         private void DrawSelection()
         {
-            Console.Write(" ");
+            ConsoleIO.Write(" ");
             for (int i = 0; i < columnAmount; i++)
             {
                 if (selection == i)
-                    Console.Write(" v");
+                    ConsoleIO.Write(" v");
                 else
-                    Console.Write("  ");
+                    ConsoleIO.Write("  ");
             }
         }
 
         private void DrawTop()
         {
-            Console.Write("╔═");
+            ConsoleIO.Write("╔═");
             for (int i = 0; i < columnAmount; i++)
-                Console.Write("══");
-            Console.Write("╗");
+                ConsoleIO.Write("══");
+            ConsoleIO.Write("╗");
         }
 
         private void DrawRow(int row)
         {
-            Console.Write("║ ");
+            ConsoleIO.Write("║ ");
             for (int i = 0; i < columnAmount; i++)
             {
                 Player? piece = field[i][row];
                 if (piece is null)
-                    Console.Write("○");
+                    ConsoleIO.Write("○");
                 else
                 {
-                    Console.ForegroundColor = piece.color;
-                    Console.Write("●");
-                    Console.ForegroundColor = Program.defaultForegroundColor;
+                    ConsoleIO.ForegroundColor = piece.color;
+                    ConsoleIO.Write("●");
+                    ConsoleIO.ForegroundColor = Program.defaultForegroundColor;
                 }
-                Console.Write(" ");
+                ConsoleIO.Write(" ");
             }
-            Console.Write("║");
+            ConsoleIO.Write("║");
         }
 
         private void DrawBottom()
         {
-            Console.Write("╚═");
-            for (int i = 0; i < columnAmount; i++)
-                Console.Write("══");
-            Console.Write("╝");
+            ConsoleIO.Write("╚═");
+            for (int i = 0; i < columnAmount; i++) 
+                ConsoleIO.Write("══");
+            ConsoleIO.Write("╝");
         }
     }
 
-    class Column
+    public class Column
     {
         private Player?[] column;
         private int nextEmpty;
@@ -130,8 +133,6 @@ namespace Connect4
         {
             nextEmpty = rows - 1;
             column = new Player?[rows];
-            for (int i = 0; i < rows; i++)
-                column[i] = null;
         }
 
         public Player? this[int index]

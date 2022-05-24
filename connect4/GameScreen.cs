@@ -13,13 +13,18 @@ namespace Connect4
 
         private string endText;
         private bool gameEnded;
-        public GameScreen(Player player1, Player player2, int boardWidth, int boardHeight)
+
+        private readonly IConsoleIO ConsoleIO;
+
+
+        public GameScreen(IConsoleIO consoleIO, Player player1, Player player2, int boardWidth, int boardHeight)
         {
+            ConsoleIO = consoleIO;
             this.player1 = player1;
             this.player2 = player2;
             this.currentTurn = player1;
-            this.board = new Board(boardWidth, boardHeight);
-            this.timer = new GameTimer(Console.WindowWidth / 2, 2);
+            this.board = new Board(ConsoleIO, boardWidth, boardHeight);
+            this.timer = new GameTimer(ConsoleIO, ConsoleIO.WindowWidth / 2, 2);
             this.referee = new GameReferee(player1, player2, boardWidth, boardHeight);
             this.endText = "";
             this.gameEnded = false;
@@ -29,15 +34,15 @@ namespace Connect4
         public void Play()
         {
             timer.Start(30);
-            Program.SetDrawScreen(Draw);
+            Program.SetDrawScreen(ConsoleIO, Draw);
 
             while(true)
             {
-                Program.DrawOnResize();
+                Program.DrawOnResize(ConsoleIO);
                 // Check if a key is pressed
-                if (Console.KeyAvailable)
+                if (ConsoleIO.KeyAvailable)
                 {
-                    ConsoleKey key = Console.ReadKey(true).Key;
+                    ConsoleKey key = ConsoleIO.ReadKey(true).Key;
                     if (gameEnded)
                         return;
                     switch (key)
@@ -68,12 +73,12 @@ namespace Connect4
 
                             break;
                         case ConsoleKey.Escape:
-                            Program.CloseProgram();
+                            Program.CloseProgram(ConsoleIO);
                             break;
                         default:
                             break;
                     }
-                    Program.SafeDraw(false);
+                    Program.SafeDraw(ConsoleIO, false);
                 }
                 // Check if the turn timer has ended
                 if (timer.Stopped)
@@ -90,18 +95,18 @@ namespace Connect4
 
         private void Draw()
         {
-            timer.UpdatePosition(Console.WindowWidth / 2, 2);
-            Console.SetCursorPosition(1, 1);
+            timer.UpdatePosition(ConsoleIO.WindowWidth / 2, 2);
+            ConsoleIO.SetCursorPosition(1, 1);
             player1.Draw(currentTurn == player1);
-            Console.SetCursorPosition(Console.WindowWidth - player2.name.Length - 5, 1);
+            ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth - player2.name.Length - 5, 1);
             player2.Draw(currentTurn == player2);
-            board.Draw(Console.WindowWidth / 2 - (board.columnAmount + 1), Console.WindowHeight / 2 - (board.rowAmount / 2 + 1), !gameEnded);
+            board.Draw(ConsoleIO.WindowWidth / 2 - (board.columnAmount + 1), ConsoleIO.WindowHeight / 2 - (board.rowAmount / 2 + 1), !gameEnded);
             if (gameEnded)
             {
-                Console.SetCursorPosition(Console.WindowWidth / 2 - endText.Length / 2, 2);
-                Console.Write(endText);
-                Console.SetCursorPosition(Console.WindowWidth / 2 - 14, 3);
-                Console.Write("Press any key to continue...");
+                ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - endText.Length / 2, 2);
+                ConsoleIO.Write(endText);
+                ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - 14, 3);
+                ConsoleIO.Write("Press any key to continue...");
             }
             else
                 timer.Draw();
@@ -115,8 +120,8 @@ namespace Connect4
                 endText = winner.name + " won! Congratulations!";
             timer.Stop();
             gameEnded = true;
-            while(Console.KeyAvailable)
-                Console.ReadKey(true);
+            while(ConsoleIO.KeyAvailable)
+                ConsoleIO.ReadKey(true);
         }
     }
 }

@@ -4,26 +4,27 @@ namespace Connect4
     {
         private ScreenOption[] options;
         private int selection;
+        private readonly IConsoleIO ConsoleIO;
 
-        public EndScreen()
-        {
+        public EndScreen(IConsoleIO consoleIO) {
+            ConsoleIO = consoleIO;
             selection = 0;
             options = new ScreenOption[3];
-            options[0] = new ScreenOption("New game with same players");
-            options[1] = new ScreenOption("New game with new players");
-            options[2] = new ScreenOption("Exit game");
+            options[0] = new ScreenOption(ConsoleIO, "New game with same players");
+            options[1] = new ScreenOption(ConsoleIO, "New game with new players");
+            options[2] = new ScreenOption(ConsoleIO, "Exit game");
         }
         public int Play()
         {
-            Program.SetDrawScreen(Draw);
+            Program.SetDrawScreen(ConsoleIO, Draw);
 
             while(true)
             {
-                Program.DrawOnResize();
+                Program.DrawOnResize(ConsoleIO);
                 // Check if a key is pressed
-                if (Console.KeyAvailable)
+                if (ConsoleIO.KeyAvailable)
                 {
-                    ConsoleKey key = Console.ReadKey(true).Key;
+                    ConsoleKey key = ConsoleIO.ReadKey(true).Key;
                     switch (key)
                     {
                         case ConsoleKey.UpArrow:
@@ -39,12 +40,12 @@ namespace Connect4
                         case ConsoleKey.Enter:
                             return selection;
                         case ConsoleKey.Escape:
-                            Program.CloseProgram();
+                            Program.CloseProgram(ConsoleIO);
                             break;
                         default:
                             break;
                     }
-                    Program.SafeDraw(false);
+                    Program.SafeDraw(ConsoleIO, false);
                 }
                 
                 Thread.Sleep(10);
@@ -53,22 +54,22 @@ namespace Connect4
 
         private void Draw()
         {
-            int y = Console.WindowHeight / 2 - 2;
+            int y = ConsoleIO.WindowHeight / 2 - 2;
             for (int i = 0; i < options.Length; i++)
             {
-                int x = Console.WindowWidth / 2 - options[i].text.Length / 2;
-                Console.SetCursorPosition(x - 2, y);
+                int x = ConsoleIO.WindowWidth / 2 - options[i].text.Length / 2;
+                ConsoleIO.SetCursorPosition(x - 2, y);
                 if (i == selection)
-                    Console.Write("> ");
+                    ConsoleIO.Write("> ");
                 else
-                    Console.Write("  ");
+                    ConsoleIO.Write("  ");
 
                 options[i].Draw();
 
                 if (i == selection)
-                    Console.Write(" <");
+                    ConsoleIO.Write(" <");
                 else
-                    Console.Write("  ");
+                    ConsoleIO.Write("  ");
 
                 y += 2;
             }

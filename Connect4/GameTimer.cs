@@ -4,13 +4,15 @@ using System.Timers;
 
 namespace Connect4
 {
-    class GameTimer
+    public class GameTimer
     {
         private System.Timers.Timer? _timer;
         private int sec;
         private int x, y;
-        public GameTimer(int x, int y)
+        private readonly IConsoleIO ConsoleIO;
+        public GameTimer(IConsoleIO consoleIO, int x, int y)
         {
+            ConsoleIO = consoleIO;
             this.x = x;
             this.y = y;
         }
@@ -24,7 +26,7 @@ namespace Connect4
         {
             // Hook up the Elapsed event for the timer.
             this.sec = seconds;
-            _timer = new System.Timers.Timer();
+            _timer = new();
             _timer.Interval = 1000;
             _timer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             _timer.AutoReset = true;
@@ -39,8 +41,8 @@ namespace Connect4
 
         public void Draw()
         {
-            Console.SetCursorPosition(x, y);
-            Console.Write("{0} ", sec);
+            ConsoleIO.SetCursorPosition(x, y);
+            ConsoleIO.Write("{0} ", sec);
         }
 
         public void Stop()
@@ -60,10 +62,11 @@ namespace Connect4
 
         public void OnTimedEvent(object source, ElapsedEventArgs e)
         {
+            // TODO SafeDraw cancels execution of the function?
             sec--;
-            Program.SafeDraw(false);
             if (sec == 0)
                 Stop();
+            Program.SafeDraw(ConsoleIO, false);
         }
     }
 }

@@ -4,9 +4,11 @@ namespace Connect4
     {
         public string name;
         public ConsoleColor color;
+        private readonly IConsoleIO ConsoleIO;
 
-        public Player(string name, ConsoleColor color)
+        public Player(IConsoleIO consoleIO, string name, ConsoleColor color)
         {
+            ConsoleIO = consoleIO;
             this.name = name;
             this.color = color;
         }
@@ -14,18 +16,18 @@ namespace Connect4
         public void Draw(bool isTurn)
         {
             if (isTurn)
-                Console.Write("> ");
+                ConsoleIO.Write("> ");
             else
-                Console.Write("  ");
+                ConsoleIO.Write("  ");
 
-            Console.ForegroundColor = color;
-            Console.Write(name);
-            Console.ForegroundColor = Program.defaultForegroundColor;
+            ConsoleIO.ForegroundColor = color;
+            ConsoleIO.Write(name);
+            ConsoleIO.ForegroundColor = Program.defaultForegroundColor;
 
             if (isTurn)
-                Console.Write(" <");
+                ConsoleIO.Write(" <");
             else
-                Console.Write("  ");
+                ConsoleIO.Write("  ");
         }
         
     }

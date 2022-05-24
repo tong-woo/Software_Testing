@@ -1,24 +1,27 @@
 namespace Connect4
 {
-    class ScreenOption
+    public class ScreenOption
     {
         public string text;
         public ConsoleColor color;
-        public ScreenOption(string text)
-        {
+        private readonly IConsoleIO ConsoleIO;
+
+        public ScreenOption(IConsoleIO consoleIO, string text) {
+            ConsoleIO = consoleIO;
             this.text = text;
             this.color = Program.defaultForegroundColor;
         }
-        public ScreenOption(string text, ConsoleColor color)
+        public ScreenOption(IConsoleIO consoleIO, string text, ConsoleColor color)
         {
+            ConsoleIO = consoleIO;
             this.text = text;
             this.color = color;
         }
         public void Draw()
         {
-            Console.ForegroundColor = this.color;
-            Console.Write(text);
-            Console.ForegroundColor = Program.defaultForegroundColor;
+            ConsoleIO.ForegroundColor = this.color;
+            ConsoleIO.Write(text);
+            ConsoleIO.ForegroundColor = Program.defaultForegroundColor;
         }
     }
 }

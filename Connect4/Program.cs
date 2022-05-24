@@ -1,11 +1,9 @@
 ﻿
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Connect4
 {
-    class Program
+    public class Program
     {
         public static Action drawCurrentScreen = () => {};
         public static ConsoleColor defaultForegroundColor, defaultBackgroundColor;
@@ -16,71 +14,73 @@ namespace Connect4
         private static int currentWidth = 0, currentHeight = 0;
         static void Main(string[] args)
         {
+            ConsoleIO ConsoleIO = new();
+            // TODO
             Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) => {e.Cancel = true;};
             Console.CursorVisible = false;
             Console.OutputEncoding = Encoding.UTF8;
-            defaultForegroundColor = Console.ForegroundColor;
-            defaultBackgroundColor = Console.BackgroundColor;
+            defaultForegroundColor = ConsoleIO.ForegroundColor;
+            defaultBackgroundColor = ConsoleIO.BackgroundColor;
 
-            ToStartScreen();
+            ToStartScreen(ConsoleIO);
         }
-        static void ToStartScreen()
+        static void ToStartScreen(IConsoleIO ConsoleIO)
         {
             player1 = null;
             player2 = null;
-            StartScreen start = new StartScreen();
+            StartScreen start = new StartScreen(ConsoleIO);
             (player1, player2) = start.Play();
-            ToGameScreen();
+            ToGameScreen(ConsoleIO);
         }
-        static void ToGameScreen()
+        static void ToGameScreen(IConsoleIO ConsoleIO)
         {
-            GameScreen game = new GameScreen(player1!, player2!, boardWidth, boardHeight);
+            GameScreen game = new GameScreen(ConsoleIO, player1!, player2!, boardWidth, boardHeight);
             game.Play();
-            ToEndScreen();
+            ToEndScreen(ConsoleIO);
         }
-        static void ToEndScreen()
+        static void ToEndScreen(IConsoleIO ConsoleIO)
         {
-            EndScreen end = new EndScreen();
+            EndScreen end = new EndScreen(ConsoleIO);
             int selection = end.Play();
             if (selection == 0)
-                ToGameScreen();
+                ToGameScreen(ConsoleIO);
             else if (selection == 1)
-                ToStartScreen();
+                ToStartScreen(ConsoleIO);
             else
-                CloseProgram();
+                CloseProgram(ConsoleIO);
         }
-        public static void CloseProgram()
+        public static void CloseProgram(IConsoleIO ConsoleIO)
         {
-            Console.Clear();
-            Console.CursorVisible = true;
+            ConsoleIO.Clear();
+            ConsoleIO.CursorVisible = true;
             Environment.Exit(0);
         }
-        public static void SetDrawScreen(Action draw)
+        public static void SetDrawScreen(IConsoleIO ConsoleIO, Action draw)
         {
             drawCurrentScreen = draw;
-            SafeDraw(true);
+            SafeDraw(ConsoleIO, true);
         }
-        public static void SafeDraw(bool clear)
+        public static void SafeDraw(IConsoleIO ConsoleIO, bool clear)
         {
             if (clear)
-                Console.Clear();
-            if (Console.WindowWidth < Program.minConsoleWidth || Console.WindowHeight < Program.minConsoleHeight)
+                ConsoleIO.Clear();
+            if (ConsoleIO.WindowWidth < Program.minConsoleWidth || ConsoleIO.WindowHeight < Program.minConsoleHeight)
             {
-                Console.SetCursorPosition(0, 0);
-                Console.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
+                ConsoleIO.SetCursorPosition(0, 0);
+                ConsoleIO.Write("Console window should be at least {0}x{1}", Program.minConsoleWidth, Program.minConsoleHeight);
             }
             else
                 drawCurrentScreen!();
         }
-        public static void DrawOnResize()
+        public static void DrawOnResize(IConsoleIO ConsoleIO)
         {
             // Make sure the console fixes itself on resize
-            if (currentWidth != Console.WindowWidth || currentHeight != Console.WindowHeight)
+            if (currentWidth != ConsoleIO.WindowWidth || currentHeight != ConsoleIO.WindowHeight)
             {
-                SafeDraw(true);
+                SafeDraw(ConsoleIO, true);
             }
-            currentWidth = Console.WindowWidth;
-            currentHeight = Console.WindowHeight;
+            currentWidth = ConsoleIO.WindowWidth;
+            currentHeight = ConsoleIO.WindowHeight;
         }
     }
 }

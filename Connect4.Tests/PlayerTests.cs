@@ -1,5 +1,6 @@
 using Connect4;
 using System;
+using Moq;
 
 namespace Connect4.Tests
 {
@@ -7,11 +8,11 @@ namespace Connect4.Tests
     public class PlayerTests
     {
         [TestMethod]
-        public void Player_Draw_IsTurn_3_2() {
+        public void Player_Draw_IsTurn_T_3_2() {
             // Arrange
-            Player player = new("playerName", ConsoleColor.White);
             StringWriter sw = new();
-            Console.SetOut(sw);
+            ConsoleIO consoleIO = new(sw);
+            Player player = new(consoleIO, "playerName", ConsoleColor.White);
 
             // Act
             player.Draw(true);
@@ -21,12 +22,12 @@ namespace Connect4.Tests
         }
 
         [TestMethod]
-        public void Player_Draw_IsNotTurn_3_2()
+        public void Player_Draw_IsNotTurn_T_3_3()
         {
             // Arrange
-            Player player = new("playerName", ConsoleColor.White);
             StringWriter sw = new();
-            Console.SetOut(sw);
+            ConsoleIO consoleIO = new(sw);
+            Player player = new(consoleIO, "playerName", ConsoleColor.White);
 
             // Act
             player.Draw(false);

@@ -1,52 +1,56 @@
 namespace Connect4
 {
-    class StartScreen
+    public class StartScreen
     {
         NameSelection p1NameSelection, p2NameSelection;
         ColorSelection p1ColorSelection, p2ColorSelection;
-        public StartScreen()
+        private readonly IConsoleIO ConsoleIO;
+        public StartScreen(IConsoleIO consoleIO)
         {
-            p1NameSelection = new NameSelection();
-            p2NameSelection = new NameSelection();
-            p1ColorSelection = new ColorSelection();
-            p2ColorSelection = new ColorSelection();
+            ConsoleIO = consoleIO;
+            p1NameSelection = new NameSelection(ConsoleIO);
+            p2NameSelection = new NameSelection(ConsoleIO);
+            p1ColorSelection = new ColorSelection(ConsoleIO);
+            p2ColorSelection = new ColorSelection(ConsoleIO);
         }
         public (Player, Player) Play()
         {
             string p1Name = p1NameSelection.Play(1, null);
             ConsoleColor p1Color = p1ColorSelection.Play(p1Name, null);
 
-            Player p1 = new Player(p1Name, p1Color);
+            Player p1 = new Player(ConsoleIO, p1Name, p1Color);
 
             string p2Name = p2NameSelection.Play(2, p1);
             ConsoleColor p2Color = p2ColorSelection.Play(p2Name, p1);
 
-            Player p2 = new Player(p2Name, p2Color);
+            Player p2 = new Player(ConsoleIO, p2Name, p2Color);
             return (p1, p2);
         }
     }
 
-    class NameSelection
+    public class NameSelection
     {
         string name, error;
-        public NameSelection()
+        private readonly IConsoleIO ConsoleIO;
+        public NameSelection(IConsoleIO consoleIO)
         {
+            ConsoleIO = consoleIO;
             name = "";
             error = "";
         }
         public string Play(int number, Player? other)
         {
-            Program.SetDrawScreen(() => Draw(number));
-            Console.CursorVisible = true;
+            Program.SetDrawScreen(ConsoleIO, () => Draw(number));
+            ConsoleIO.CursorVisible = true;
 
             while (true)
             {
                 name = "";
-                Program.SafeDraw(false);
+                Program.SafeDraw(ConsoleIO, false);
                 ReadName();
                 if (isValid(name, other))
                 {
-                    Console.CursorVisible = false;
+                    ConsoleIO.CursorVisible = false;
                     return name;
                 }
                 else
@@ -57,10 +61,10 @@ namespace Connect4
         {
             while(true)
             {
-                Program.DrawOnResize();
-                if (Console.KeyAvailable)
+                Program.DrawOnResize(ConsoleIO);
+                if (ConsoleIO.KeyAvailable)
                 {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+                    ConsoleKeyInfo keyInfo = ConsoleIO.ReadKey(true);
                     if (((keyInfo.KeyChar >= 'a' && keyInfo.KeyChar <= 'z') || (keyInfo.KeyChar >= 'A' && keyInfo.KeyChar <= 'Z')) && name.Length < 16)
                         name += keyInfo.KeyChar;
                     else if (keyInfo.Key == ConsoleKey.Backspace && name.Length > 0)
@@ -68,26 +72,26 @@ namespace Connect4
                     else if (keyInfo.Key == ConsoleKey.Enter)
                         return;
                     else if (keyInfo.Key == ConsoleKey.Escape)
-                        Program.CloseProgram();
-                    Program.SafeDraw(false);
+                        Program.CloseProgram(ConsoleIO);
+                    Program.SafeDraw(ConsoleIO, false);
                 }
                 Thread.Sleep(10);
             }
         }
         public void Draw(int number)
         {
-            Console.CursorVisible = false;
+            ConsoleIO.CursorVisible = false;
             string text = "Player " + number + "'s name:";
-            Console.SetCursorPosition(Console.WindowWidth / 2 - error.Length / 2, Console.WindowHeight / 2 - 3);
-            Console.Write(error);
-            Console.SetCursorPosition(Console.WindowWidth / 2 - text.Length / 2, Console.WindowHeight / 2 - 1);
-            Console.Write(text);
-            Console.SetCursorPosition(Console.WindowWidth / 2 - 8, Console.WindowHeight / 2 + 1);
-            Console.Write("                 ");
-            Console.SetCursorPosition(Console.WindowWidth / 2 - 8, Console.WindowHeight / 2 + 1);
-            Console.Write(name);
-            Console.SetCursorPosition(Console.WindowWidth / 2 - 8 + name.Length, Console.WindowHeight / 2 + 1);
-            Console.CursorVisible = true;
+            ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - error.Length / 2, ConsoleIO.WindowHeight / 2 - 3);
+            ConsoleIO.Write(error);
+            ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - text.Length / 2, ConsoleIO.WindowHeight / 2 - 1);
+            ConsoleIO.Write(text);
+            ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - 8, ConsoleIO.WindowHeight / 2 + 1);
+            ConsoleIO.Write("                 ");
+            ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - 8, ConsoleIO.WindowHeight / 2 + 1);
+            ConsoleIO.Write(name);
+            ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - 8 + name.Length, ConsoleIO.WindowHeight / 2 + 1);
+            ConsoleIO.CursorVisible = true;
         }
         private bool isValid(string name, Player? other)
         {
@@ -100,32 +104,34 @@ namespace Connect4
         }
     }
 
-    class ColorSelection
+    public class ColorSelection
     {
-        string error;
+        public string error;
         int selection;
         ScreenOption[] options;
-        public ColorSelection()
+        private readonly IConsoleIO ConsoleIO;
+        public ColorSelection(IConsoleIO consoleIO)
         {
+            ConsoleIO = consoleIO;
             error = "";
             selection = 0;
             options = new ScreenOption[4];
-            options[0] = new ScreenOption("Red", ConsoleColor.Red);
-            options[1] = new ScreenOption("Yellow", ConsoleColor.Yellow);
-            options[2] = new ScreenOption("Green", ConsoleColor.Green);
-            options[3] = new ScreenOption("Blue", ConsoleColor.Blue);
+            options[0] = new ScreenOption(ConsoleIO, "Red", ConsoleColor.Red);
+            options[1] = new ScreenOption(ConsoleIO, "Yellow", ConsoleColor.Yellow);
+            options[2] = new ScreenOption(ConsoleIO, "Green", ConsoleColor.Green);
+            options[3] = new ScreenOption(ConsoleIO, "Blue", ConsoleColor.Blue);
         }
         public ConsoleColor Play(string name, Player? other)
         {
-            Program.SetDrawScreen(() => Draw(name));
+            Program.SetDrawScreen(ConsoleIO, () => Draw(name));
 
             while(true)
             {
-                Program.DrawOnResize();
+                Program.DrawOnResize(ConsoleIO);
                 // Check if a key is pressed
-                if (Console.KeyAvailable)
+                if (ConsoleIO.KeyAvailable)
                 {
-                    ConsoleKey key = Console.ReadKey(true).Key;
+                    ConsoleKey key = ConsoleIO.ReadKey(true).Key;
                     switch (key)
                     {
                         case ConsoleKey.UpArrow:
@@ -145,42 +151,42 @@ namespace Connect4
                                 error = "Color cannot be the same";
                             break;
                         case ConsoleKey.Escape:
-                            Program.CloseProgram();
+                            Program.CloseProgram(ConsoleIO);
                             break;
                         default:
                             break;
                     }
-                    Program.SafeDraw(false);
+                    Program.SafeDraw(ConsoleIO, false);
                 }
                 
                 Thread.Sleep(10);
             }
         }
-        private void Draw(string name)
+        public void Draw(string name)
         {
             string text = name + "'s color:";
-            Console.SetCursorPosition(Console.WindowWidth / 2 - error.Length / 2, Console.WindowHeight / 2 - 6);
-            Console.Write(error);
+            ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - error.Length / 2, ConsoleIO.WindowHeight / 2 - 6);
+            ConsoleIO.Write(error);
             
-            Console.SetCursorPosition(Console.WindowWidth / 2 - text.Length / 2, Console.WindowHeight / 2 - 4);
-            Console.Write(text);
+            ConsoleIO.SetCursorPosition(ConsoleIO.WindowWidth / 2 - text.Length / 2, ConsoleIO.WindowHeight / 2 - 4);
+            ConsoleIO.Write(text);
 
-            int y = Console.WindowHeight / 2 - 2;
+            int y = ConsoleIO.WindowHeight / 2 - 2;
             for (int i = 0; i < options.Length; i++)
             {
-                int x = Console.WindowWidth / 2 - options[i].text.Length / 2;
-                Console.SetCursorPosition(x - 2, y);
+                int x = ConsoleIO.WindowWidth / 2 - options[i].text.Length / 2;
+                ConsoleIO.SetCursorPosition(x - 2, y);
                 if (i == selection)
-                    Console.Write("> ");
+                    ConsoleIO.Write("> ");
                 else
-                    Console.Write("  ");
+                    ConsoleIO.Write("  ");
 
                 options[i].Draw();
 
                 if (i == selection)
-                    Console.Write(" <");
+                    ConsoleIO.Write(" <");
                 else
-                    Console.Write("  ");
+                    ConsoleIO.Write("  ");
 
                 y += 2;
             }
